@@ -1,0 +1,7 @@
+#General
+#-------------------------------------------------------------------------------
+dist
+node_modules
+*.tsx
+yarn.lock
+package-lock.json
