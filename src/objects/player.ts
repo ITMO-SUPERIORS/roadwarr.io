@@ -24,7 +24,7 @@ export class Player extends Phaser.GameObjects.Image{
         // physics
         this.scene.physics.world.enable(this);
         this.body.allowGravity = false;
-        this.body.setSize(72, 84);
+        this.body.setSize(this.width, this.height);
 
         this.scene.add.existing(this);
     }
@@ -43,12 +43,15 @@ export class Player extends Phaser.GameObjects.Image{
         this.cursors = this.scene.input.keyboard.createCursorKeys();
     }
 
+    // public setVelocity(velocity: number): void{
+    //     this.body.setVelocityY(velocity);
+    // }
 
     // Смэрть
     public getDead(): boolean{
         return this.isDead;
     }
-    public setDead(dead): void {
+    public setDead(dead: boolean): void {
         this.isDead = dead;
     }
 

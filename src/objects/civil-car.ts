@@ -6,7 +6,7 @@
 **/
 
 export class CivilCar extends Phaser.GameObjects.Image{
-    constructor(params){
+    constructor(params: any){
         super(params.scene, params.x, params.y, params.key);
         this.setOrigin(0, 0);
 
@@ -14,7 +14,7 @@ export class CivilCar extends Phaser.GameObjects.Image{
         this.scene.physics.world.enable(this);
         this.body.allowGravity = false;
         this.body.setVelocityY(200);
-        this.body.setSize(72, 84);
+        this.body.setSize(this.width, this.height);
 
         this.scene.add.existing(this);
 
