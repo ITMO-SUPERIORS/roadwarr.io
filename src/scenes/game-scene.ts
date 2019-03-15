@@ -16,7 +16,8 @@ export class GameScene extends Phaser.Scene {
   private player: Player;
   private fcivil: CivilCar;
   private scoreText: Phaser.GameObjects.BitmapText;
-  
+  private background: Phaser.GameObjects.Image;
+  private roadside: number;  
   private road: Phaser.GameObjects.TileSprite;
   private roadX: number;
   private roadTex: Phaser.Textures.Texture;
@@ -37,6 +38,7 @@ export class GameScene extends Phaser.Scene {
     this.worldWidth = this.sys.canvas.width;
     this.worldHeight = this.sys.canvas.height;
     this.registry.set("score", 0);
+    this.roadside = 40;
   }
 
   preload(): void {
@@ -49,6 +51,9 @@ export class GameScene extends Phaser.Scene {
   }
 
   create(): void {
+    this.background = this.add.image(this.worldWidth/2, this.worldHeight/2, "background");
+    this.background.setScale(1.8, 1.8);
+
     this.roadTex = this.textures.get("road");
     this.roadWidth = this.roadTex.getSourceImage().width;
     this.roadX = this.worldWidth / 2 - this.roadWidth;
@@ -73,7 +78,7 @@ export class GameScene extends Phaser.Scene {
     // Добавление таймера на появление мирных автомобилей
     this.addNewCivilCar();
     this.time.addEvent({ 
-      delay: 1500, //ms
+      delay: 2200, //ms
       callback: this.addNewCivilCar,
       callbackScope: this,
       loop: true
@@ -118,8 +123,9 @@ export class GameScene extends Phaser.Scene {
       this.isOutOfScene();
     }
     else{
-      // Если состояние игрока - мертв, то перезапускаем сцену
-      this.scene.restart();
+      // если игрок мертв
+      // запускаем функцию окончания игры
+      this.game_over();
     }
   }
 
@@ -130,8 +136,8 @@ export class GameScene extends Phaser.Scene {
 
   // Добавление мирного автомобиля
   private addNewCivilCar(): void {
-    let x = Phaser.Math.Between(this.roadX, this.worldWidth - this.roadX - this.player.width);
-    this.addCivilCar(x, -80);
+    let x = Phaser.Math.Between(this.roadX + this.roadside, this.worldWidth - this.roadX - this.player.width - this.roadside);
+    this.addCivilCar(x, -150);
   }
 
   private addCivilCar(x: number, y: number): void {
@@ -147,7 +153,7 @@ export class GameScene extends Phaser.Scene {
 
   // добавление монетки в сцену
   private addNewCoin(): void{
-    let x = Phaser.Math.Between(this.roadX, this.worldWidth - this.roadX - 80);
+    let x = Phaser.Math.Between(this.roadX + this.roadside, this.worldWidth - this.roadX - 80 - this.roadside);
     let range = Phaser.Math.Between(0, 9);
     if (range < 8){
       this.addCoin(x, -80, 1);
@@ -197,7 +203,7 @@ export class GameScene extends Phaser.Scene {
   private checkPlayerPos(): void{
     const { x: posX } = this.player.getCenter();
     let defaultAngle = this.player.rotation;
-    if (posX < this.roadX || posX > (this.worldWidth - this.roadX)){
+    if (posX < (this.roadX + this.roadside) || posX > (this.worldWidth - this.roadX - this.roadside)){
       let rotate = Phaser.Math.Between(defaultAngle - 5, defaultAngle + 5);
       this.player.body.setVelocityY(250);
       this.player.setAngle(rotate);
@@ -208,4 +214,21 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
+
+  private game_over(): void{
+    this.road.tilePositionY = this.road.tilePositionY;
+    this.coin.body.setVelocityY(0);
+    this.civilians.clear();
+    this.time.addEvent({ 
+      delay: 1000, //ms
+      callback: this.backToMenu,
+      callbackScope: this,
+      loop: false
+    });
+    
+  }
+
+  private backToMenu(): void{
+    this.scene.start("MenuScene");
+  }
 }

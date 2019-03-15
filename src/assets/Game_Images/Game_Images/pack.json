@@ -8,12 +8,6 @@
         "fontDataURL": "./src/assets/font/font.fnt"
       },
       {
-        "type": "bitmapFont",
-        "key": "game-font",
-        "textureURL": "./src/assets/font/game_font/font.png",
-        "fontDataURL": "./src/assets/font/game_font/font.fnt"
-      },
-      {
         "type": "image",
         "key": "road",
         "url": "./src/assets/images/road.png"
@@ -21,7 +15,7 @@
       {
         "type": "image",
         "key": "player",
-        "url": "./src/assets/images/car_2.png"
+        "url": "./src/assets/images/car.png"
       },
       {
         "type": "image",
@@ -29,17 +23,12 @@
         "url": "./src/assets/images/civil_car.png"
       },
       {
-        "type": "image",
-        "key": "background",
-        "url": "./src/assets/images/grass_ground.png"
-      },
-      {
         "type": "spritesheet",
         "key": "coins",
         "url": "./src/assets/images/coins.png",
         "frameConfig": {
-          "frameWidth": 130,
-          "frameHeight": 130
+          "frameWidth": 120,
+          "frameHeight": 160
         }
       }
     ]
