@@ -10,7 +10,7 @@ import { MenuScene } from "./scenes/menu-scene";
 import { GameScene } from "./scenes/game-scene";
 
 const config: GameConfig = {
-  width: 800,
+  width: 1000,
   height: 600,
   parent: "game",
   scene: [MenuScene, GameScene],
