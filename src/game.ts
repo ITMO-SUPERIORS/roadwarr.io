@@ -8,7 +8,6 @@
 import "phaser";
 import { MenuScene } from "./scenes/menu-scene";
 import { GameScene } from "./scenes/game-scene";
-import { create } from "domain";
 
 const config: GameConfig = {
   width: 1000,

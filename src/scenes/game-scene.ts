@@ -14,9 +14,11 @@ import { Stone } from "../objects/stone";
 export class GameScene extends Phaser.Scene {
   private civilians : Phaser.GameObjects.Group;
   private coin: Coin;
-  private stones: Phaser.GameObjects.Group;
+  private stone: Stone;
+  // private stones: Phaser.GameObjects.Group;
   private player: Player;
   private fcivil: CivilCar;
+  private civilArray: Phaser.GameObjects.GameObject[];
   private firstStone: Stone;
   private scoreText: Phaser.GameObjects.BitmapText;
   private background: Phaser.GameObjects.Image;
@@ -78,7 +80,7 @@ export class GameScene extends Phaser.Scene {
 
     this.civilians = this.add.group({ classType: CivilCar });
 
-    this.stones = this.add.group({ classType: Stone });
+    // this.stones = this.add.group({ classType: Stone });
     
     // Добавление таймера на появление мирных автомобилей
     this.addNewCivilCar();
@@ -92,7 +94,7 @@ export class GameScene extends Phaser.Scene {
     // Добавление таймера на появление камней на обочине
     this.addNewStoneLeft();
     this.time.addEvent({ 
-      delay: 2500, //ms
+      delay: 1000, //ms
       callback: this.addNewStoneLeft,
       callbackScope: this,
       loop: true
@@ -132,9 +134,9 @@ export class GameScene extends Phaser.Scene {
         this.fcivil.destroy();
 
       // Удаление камней за пределами сцены
-      this.firstStone = this.stones.getFirstAlive();
-      if (this.firstStone.y > this.worldHeight)
-        this.firstStone.destroy();
+      // this.firstStone = this.stones.getFirstAlive();
+      if (this.stone.y > this.worldHeight)
+        this.stone.destroy();
       
       // удаление монетки за пределами поля
       if (this.coin.y > this.worldHeight)
@@ -147,7 +149,7 @@ export class GameScene extends Phaser.Scene {
       this.physics.overlap(this.player, this.civilians, this.killPlayer, null, this);
 
       // Если игрок столкнулся с камнем
-      this.physics.overlap(this.player, this.stones, this.killPlayer, null, this);
+      this.physics.overlap(this.player, this.stone, this.killPlayer, null, this);
 
       this.physics.overlap(this.coin, this.civilians, this.respawnCoin, null, this)
       // Если игрок выехал за пределы границ
@@ -173,14 +175,14 @@ export class GameScene extends Phaser.Scene {
 
   // Добавление левого камня
   private addNewStoneLeft(): void {
-    let x = Phaser.Math.Between(0, this.roadside);
-    this.addStone(x, -150);
+    let x = Phaser.Math.Between(0, this.roadX - 100);
+    this.addStone(x, -80);
   }
 
   // Добавление правого камня
   private addNewStoneRight(): void {
-    let x = Phaser.Math.Between(this.worldWidth - this.roadX - this.roadside, this.worldWidth);
-    this.addStone(x, -150);
+    let x = Phaser.Math.Between(this.worldWidth - this.roadX, this.worldWidth);
+    this.addStone(x, -80);
   }
 
   private addCivilCar(x: number, y: number): void {
@@ -195,14 +197,12 @@ export class GameScene extends Phaser.Scene {
   }
 
   private addStone(x: number, y: number): void {
-    this.stones.add(
-      new Stone({
+    this.stone = new Stone({
         scene: this,
         x: x,
         y: y,
         key: "stone"
       })
-    );
   }
 
   // добавление монетки в сцену
@@ -272,8 +272,12 @@ export class GameScene extends Phaser.Scene {
   private game_over(): void{
     this.road.tilePositionY = this.road.tilePositionY;
     this.coin.body.setVelocityY(0);
-    this.civilians.clear();
-    this.stones.clear();
+    // this.stone.body.setVelocityY(0);
+    this.civilArray =  this.civilians.getChildren(); 
+    for (let i = 0; i < this.civilians.getLength(); i++){
+      this.civilArray[i].body.setVelocityY(0);
+    }
+
     this.time.addEvent({ 
       delay: 1000, //ms
       callback: this.backToMenu,

@@ -17,7 +17,5 @@ export class CivilCar extends Phaser.GameObjects.Image{
         this.body.setSize(this.width, this.height);
 
         this.scene.add.existing(this);
-
-        
     }  
 }

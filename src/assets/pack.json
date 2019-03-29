@@ -30,6 +30,11 @@
       },
       {
         "type": "image",
+        "key": "stone",
+        "url": "./src/assets/images/stone.png"
+      },
+      {
+        "type": "image",
         "key": "background",
         "url": "./src/assets/images/grass_ground.png"
       },
