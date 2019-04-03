@@ -7,13 +7,14 @@
 
 import "phaser";
 import { MenuScene } from "./scenes/menu-scene";
+import { ChooseCarScene } from "./scenes/choose-car-scene";
 import { GameScene } from "./scenes/game-scene";
 
 const config: GameConfig = {
   width: 1000,
   height: 600,
   parent: "game",
-  scene: [MenuScene, GameScene],
+  scene: [MenuScene, ChooseCarScene, GameScene],
   input: {
     keyboard: true
   },

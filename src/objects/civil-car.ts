@@ -6,10 +6,13 @@
 **/
 
 export class CivilCar extends Phaser.GameObjects.Image{
+    private scaleVal: number;
     constructor(params: any){
         super(params.scene, params.x, params.y, params.key);
         this.setOrigin(0, 0);
 
+        this.scaleVal = 0.8;
+        this.setScale(this.scaleVal);
         // physics
         this.scene.physics.world.enable(this);
         this.body.allowGravity = false;
@@ -17,5 +20,5 @@ export class CivilCar extends Phaser.GameObjects.Image{
         this.body.setSize(this.width, this.height);
 
         this.scene.add.existing(this);
-    }  
+    }
 }

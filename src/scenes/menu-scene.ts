@@ -27,7 +27,7 @@ export class MenuScene extends Phaser.Scene{
 
     init(): void {
         this.startKey = this.input.keyboard.addKey(
-            Phaser.Input.Keyboard.KeyCodes.S
+            Phaser.Input.Keyboard.KeyCodes.ENTER
         );
         this.startKey.isDown = false;
         
@@ -71,7 +71,7 @@ export class MenuScene extends Phaser.Scene{
                 this.worldWidth / 2 - 150,
                 this.worldHeight / 2,
                 "game-font",
-                "S: Start game",
+                "ENTER: Start game",
                 20
             )
         );
@@ -80,7 +80,7 @@ export class MenuScene extends Phaser.Scene{
     update(): void {
         this.road.tilePositionY -= 4;
         if (this.startKey.isDown){
-            this.scene.start("GameScene");
+            this.scene.start("ChooseCarScene");
         }
     }
 }

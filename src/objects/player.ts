@@ -8,11 +8,10 @@
 export class Player extends Phaser.GameObjects.Image{
     private cursors: Phaser.Input.Keyboard.CursorKeys;
     private speed: number;
-    // private diagSpeed: number;
     private isDead: boolean;
-
+    private scaleVal: number;
     constructor(params){
-        super(params.scene, params.x, params.y, params.key);
+        super(params.scene, params.x, params.y, params.key, params.frame);
 
         this.initVariables();
         // sprite
@@ -21,6 +20,8 @@ export class Player extends Phaser.GameObjects.Image{
         // input
         this.initInput();
 
+        this.scaleVal = 0.8;
+        this.setScale(this.scaleVal);
         // physics
         this.scene.physics.world.enable(this);
         this.body.allowGravity = false;

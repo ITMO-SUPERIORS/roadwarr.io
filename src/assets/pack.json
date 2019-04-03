@@ -39,6 +39,15 @@
         "url": "./src/assets/images/grass_ground.png"
       },
       {
+        "type":"spritesheet",
+        "key": "player_cars",
+        "url": "./src/assets/images/cars.png",
+        "frameConfig":{
+          "frameWidth": 67,
+          "frameHeight": 126
+        }
+      },
+      {
         "type": "spritesheet",
         "key": "coins",
         "url": "./src/assets/images/coins.png",
