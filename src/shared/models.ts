@@ -5,12 +5,12 @@ export interface Civil {
 }
 
 export interface PlayerCar {
-    name: string,
-    frame: number
-    // name: string;
-    // id: string;
-    // x: number;
-    // y: number;
+    name: string;
+    id: string;
+    x: number;
+    y: number;
+    frame: number;
+    score: number;
 }
 
 export interface Coordinates {

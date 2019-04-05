@@ -16,6 +16,7 @@ export class GameScene extends Phaser.Scene {
   private coin: Coin;
   private stones: Phaser.GameObjects.Group;
   private player: Player;
+  private opponent: Player;
   private fcivil: CivilCar;
   private fstone: Stone;
   private scoreText: Phaser.GameObjects.BitmapText;
@@ -31,7 +32,9 @@ export class GameScene extends Phaser.Scene {
   private worldWidth: number;
   private worldHeight: number;
 
-  constructor(params) {
+  socket: SocketIOClient.Emitter;
+
+  constructor() {
     super({
       key: "GameScene",
     });

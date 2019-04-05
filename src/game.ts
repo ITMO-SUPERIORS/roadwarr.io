@@ -9,6 +9,8 @@ import "phaser";
 import { MenuScene } from "./scenes/menu-scene";
 import { ChooseCarScene } from "./scenes/choose-car-scene";
 import { GameScene } from "./scenes/game-scene";
+import { PlayerCar } from "./shared/models";
+import { Player } from "./objects/player"
 
 const config: GameConfig = {
   width: 1000,
@@ -28,9 +30,14 @@ const config: GameConfig = {
 };
 
 export class Game extends Phaser.Game {
+  private actor: Player;
+  socket: SocketIOClient.Emitter;
+
   constructor(config: GameConfig) {
     super(config);
+    this.socket = io();
   }
+  
 }
 
 window.addEventListener("load", () => {
