@@ -1,9 +1,10 @@
-import { GameEvent } from "../shared/events.model";
-import { Window } from "../shared/models";
+import { GameEvent } from "../../shared/events.model";
+import { Window } from "../../shared/models";
 
 declare const window: Window;
 
 export class LoginScene {
+    socket: SocketIOClient.Emitter;
     public formContainer: HTMLDivElement;
     public loginPage: HTMLDivElement;
     public form: HTMLDivElement;
@@ -50,14 +51,14 @@ export class LoginScene {
         e.preventDefault();
         this.toggleLogin();
         const name = this.input.value;
-        // window.socket.emit(
-        //     GameEvent.authentification,
-        //     { name },
-        //     {
-        //         x: window.innerWidth,
-        //         y: window.innerHeight,
-        //     }
-        // )
+        window.socket.emit(
+            GameEvent.authentification,
+            { name }
+            // {
+            //     x: window.innerWidth,
+            //     y: window.innerHeight,
+            // }
+        )
     }
 
     private toggleLogin(): void {

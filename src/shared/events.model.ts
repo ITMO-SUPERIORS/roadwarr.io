@@ -1,8 +1,8 @@
 export class GameEvent{
     public static readonly authentification: string = "authentification:successful";
+    public static readonly menu: "game:menu";
     public static readonly end: "game:over";
     public static readonly start: "game:start";
-    public static readonly drop: "drop"; // ?????
 }
 
 export class ServerEvent {
@@ -13,7 +13,9 @@ export class ServerEvent {
 export class PlayerEvent {
     public static readonly joined: string = "player:joined";
     public static readonly protagonist: string = "player:protagonist";
-    public static readonly players: string = "actors:collection";
+    public static readonly opponent: string = "player:opponent";
+    public static readonly isReady: string = "player:isReady";
+
     public static readonly quit: string = "players:left";
     public static readonly pickup: string = "player:pickup";
     public static readonly hit: string = "player:hit";

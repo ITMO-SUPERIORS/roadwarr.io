@@ -11,12 +11,16 @@ import { Player } from "../objects/player";
 import { Coin } from "../objects/coin";
 import { Stone } from "../objects/stone";
 
+import { Window } from "../../shared/models"
+
+declare const window: Window;
+
 export class GameScene extends Phaser.Scene {
   private civilians : Phaser.GameObjects.Group;
   private coin: Coin;
   private stones: Phaser.GameObjects.Group;
   private player: Player;
-  private opponent: Player;
+  private enemyPlayer: Player;
   private fcivil: CivilCar;
   private fstone: Stone;
   private scoreText: Phaser.GameObjects.BitmapText;
@@ -35,12 +39,13 @@ export class GameScene extends Phaser.Scene {
   socket: SocketIOClient.Emitter;
 
   constructor() {
+    window.socket = io.connect();
     super({
       key: "GameScene",
     });
   }
 
-  init(data): void {
+  init(data: any): void {
     this.roadScale = 1.2;
     this.worldWidth = this.sys.canvas.width;
     this.worldHeight = this.sys.canvas.height;
@@ -61,7 +66,6 @@ export class GameScene extends Phaser.Scene {
   create(): void {
     this.background = this.add.image(this.worldWidth/2, this.worldHeight/2, "background");
     this.background.setScale(1.8, 1.8);
-
     this.roadTex = this.textures.get("roads");
     this.roadWidth = this.roadTex.getSourceImage().width;
     this.roadX = this.worldWidth / 2 - this.roadWidth*this.roadScale / 2;
@@ -69,6 +73,7 @@ export class GameScene extends Phaser.Scene {
       .tileSprite(this.roadX, 0, this.roadWidth * this.roadScale, this.worldHeight, "roads")
       .setOrigin(0, 0);
     this.road.setTileScale(this.roadScale, this.roadScale);
+    
     this.player = new Player({
       scene: this,
       x: this.worldWidth / 2,
@@ -77,6 +82,11 @@ export class GameScene extends Phaser.Scene {
       frame: this.carFrame
     });
 
+    this.enemyPlayer = new Player({
+      scene: this,
+
+    })
+    
     this.scoreText = this.add
       .bitmapText(30, 50, "font", this.registry.values.score)
       .setDepth(2);

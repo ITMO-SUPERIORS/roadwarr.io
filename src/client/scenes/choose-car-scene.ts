@@ -5,6 +5,10 @@
  * @template Digitsensitive <digit.sensitivee@gmail.com>
 **/
 
+import { Window } from "../../shared/models"
+import { PlayerEvent } from "../../shared/events.model";
+declare const window: Window;
+
 export class ChooseCarScene extends Phaser.Scene{
     private title: Phaser.GameObjects.BitmapText[] = [];
     private text: Phaser.GameObjects.BitmapText[] = [];
@@ -17,12 +21,13 @@ export class ChooseCarScene extends Phaser.Scene{
     private startKey: Phaser.Input.Keyboard.Key;
     private currFrame: number;
     private maxFrame: number;
-    private flipflop: boolean
+    private flipflop: boolean;
 
     constructor(){
         super({
             key: "ChooseCarScene"
-        });        
+        });
+        window.socket = io.connect(); 
     }
 
     init(){
@@ -81,7 +86,7 @@ export class ChooseCarScene extends Phaser.Scene{
         this.carSprite.angle -= 1;
         this.changeCar();
         if (this.startKey.isDown){
-            this.scene.start("GameScene", {frame: this.currFrame});
+            this.waitingForPlayer();
         }
     }
 
@@ -108,5 +113,22 @@ export class ChooseCarScene extends Phaser.Scene{
 
         if (this.cursors.left.isUp && this.cursors.right.isUp)
             this.flipflop = false;
+    }
+
+    // ожидание, пока будет готов другой игрок
+    private waitingForPlayer(): void{
+        this.title.push(
+            this.add.bitmapText(
+                this.worldWidth / 2 - 300, 
+                100,
+                "game-font",
+                "Waiting for 2nd player",
+                40
+            )
+        );
+        window.socket.emit(PlayerEvent.isReady);
+        window.socket.on(PlayerEvent.isReady, () => {
+            this.scene.start("GameScene", {frame: this.currFrame});
+        });
     }
 }
