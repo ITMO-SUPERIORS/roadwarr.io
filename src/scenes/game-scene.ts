@@ -59,11 +59,11 @@ export class GameScene extends Phaser.Scene {
     this.background = this.add.image(this.worldWidth/2, this.worldHeight/2, "background");
     this.background.setScale(1.8, 1.8);
 
-    this.roadTex = this.textures.get("road");
+    this.roadTex = this.textures.get("roads");
     this.roadWidth = this.roadTex.getSourceImage().width;
-    this.roadX = this.worldWidth / 2 - this.roadWidth*this.roadScale;
+    this.roadX = this.worldWidth / 2 - this.roadWidth*this.roadScale / 2;
     this.road = this.add
-      .tileSprite(this.roadX, 0, this.roadWidth * this.roadScale * 2, this.worldHeight, "road")
+      .tileSprite(this.roadX, 0, this.roadWidth * this.roadScale, this.worldHeight, "roads")
       .setOrigin(0, 0);
     this.road.setTileScale(this.roadScale, this.roadScale);
     this.player = new Player({
@@ -171,7 +171,8 @@ export class GameScene extends Phaser.Scene {
   // Добавление мирного автомобиля
   private addNewCivilCar(): void {
     let x = Phaser.Math.Between(this.roadX + this.roadside, this.worldWidth - this.roadX - this.player.width - this.roadside);
-    this.addCivilCar(x, -150);
+    let carType = Phaser.Math.Between(0, 4);
+    this.addCivilCar(x, -150, carType);
   }
 
   // Добавление левого камня
@@ -186,13 +187,14 @@ export class GameScene extends Phaser.Scene {
     this.addStone(x, -80);
   }
 
-  private addCivilCar(x: number, y: number): void {
+  private addCivilCar(x: number, y: number, frame: number): void {
     this.civilians.add(
       new CivilCar({
         scene: this,
         x: x,
         y: y,
-        key: "civilian"
+        frame: frame,
+        key: "civilians_cars"
       })
     );
   }

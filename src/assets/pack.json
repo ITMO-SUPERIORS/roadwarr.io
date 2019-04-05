@@ -20,6 +20,11 @@
       },
       {
         "type": "image",
+        "key": "roads",
+        "url": "./src/assets/images/roads.png"
+      },
+      {
+        "type": "image",
         "key": "player",
         "url": "./src/assets/images/car_2.png"
       },
@@ -45,6 +50,15 @@
         "frameConfig":{
           "frameWidth": 67,
           "frameHeight": 126
+        }
+      },
+      {
+        "type":"spritesheet",
+        "key": "civilians_cars",
+        "url": "./src/assets/images/civil_cars.png",
+        "frameConfig":{
+          "frameWidth": 67,
+          "frameHeight": 125
         }
       },
       {
