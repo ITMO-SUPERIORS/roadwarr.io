@@ -13,7 +13,7 @@ import { Stone } from "../objects/stone";
 
 import { Window } from "../../shared/models"
 
-declare const window: Window;
+// declare const window: Window;
 
 export class GameScene extends Phaser.Scene {
   private civilians : Phaser.GameObjects.Group;
@@ -39,7 +39,7 @@ export class GameScene extends Phaser.Scene {
   socket: SocketIOClient.Emitter;
 
   constructor() {
-    window.socket = io.connect();
+    // window.socket = io.connect();
     super({
       key: "GameScene",
     });
