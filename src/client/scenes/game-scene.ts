@@ -24,7 +24,7 @@ export class GameScene extends Phaser.Scene {
   private fcivil: CivilCar;
   private fstone: Stone;
   private scoreText: Phaser.GameObjects.BitmapText;
-  private background: Phaser.GameObjects.Image;
+  private background: Phaser.GameObjects.TileSprite;
   private roadside: number;  
   private road: Phaser.GameObjects.TileSprite;
   private roadX: number;
@@ -64,7 +64,9 @@ export class GameScene extends Phaser.Scene {
   }
 
   create(): void {
-    this.background = this.add.image(this.worldWidth/2, this.worldHeight/2, "background");
+    this.background = this.add
+      .tileSprite(0, 0, 0, this.worldHeight, "background")
+      .setOrigin(0, 0);
     this.background.setScale(1.8, 1.8);
     this.roadTex = this.textures.get("roads");
     this.roadWidth = this.roadTex.getSourceImage().width;
@@ -136,7 +138,8 @@ export class GameScene extends Phaser.Scene {
   update(): void {
     // если игрок жив
     if (!this.player.getDead()){
-      this.road.tilePositionY -= 7;  
+      this.road.tilePositionY -= 7;
+      this.background.tilePositionY -= 5;
       this.player.update();
 
       this.checkPlayerPos();
@@ -191,13 +194,15 @@ export class GameScene extends Phaser.Scene {
   // Добавление левого камня
   private addNewStoneLeft(): void {
     let x = Phaser.Math.Between(0, this.roadX - 100);
-    this.addStone(x, -80);
+    let stoneType = Phaser.Math.Between(0, 3);
+    this.addStone(x, -80, stoneType);
   }
 
   // Добавление правого камня
   private addNewStoneRight(): void {
     let x = Phaser.Math.Between(this.worldWidth - this.roadX, this.worldWidth);
-    this.addStone(x, -80);
+    let stoneType = Phaser.Math.Between(0, 3);
+    this.addStone(x, -80, stoneType);
   }
 
   private addCivilCar(x: number, y: number, frame: number): void {
@@ -212,13 +217,14 @@ export class GameScene extends Phaser.Scene {
     );
   }
 
-  private addStone(x: number, y: number): void {
+  private addStone(x: number, y: number, frame: number): void {
     this.stones.add(
       new Stone({
         scene: this,
         x: x,
         y: y,
-        key: "stone"
+        frame: frame,
+        key: "stones"
       })
     );
   }

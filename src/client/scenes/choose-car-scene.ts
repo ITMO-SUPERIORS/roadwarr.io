@@ -12,7 +12,7 @@ import { PlayerEvent } from "../../shared/events.model";
 export class ChooseCarScene extends Phaser.Scene{
     private title: Phaser.GameObjects.BitmapText[] = [];
     private text: Phaser.GameObjects.BitmapText[] = [];
-    private background: Phaser.GameObjects.Image;
+    private background: Phaser.GameObjects.TileSprite;
     private worldWidth: number;
     private worldHeight: number;
     private carSprite: Phaser.GameObjects.Sprite;
@@ -51,7 +51,9 @@ export class ChooseCarScene extends Phaser.Scene{
     }
 
     create(): void{
-        this.background = this.add.image(this.worldWidth/2, this.worldHeight/2, "background");
+        this.background = this.add
+            .tileSprite(0, 0, 0, this.worldHeight, "background")
+            .setOrigin(0, 0);
         this.background.setScale(1.8, 1.8);
 
         this.carsTex = this.textures.get("player_cars");
@@ -92,6 +94,7 @@ export class ChooseCarScene extends Phaser.Scene{
     }
 
     private changeCar(): void{
+        this.background.tilePositionY -= 4;
         if (this.cursors.right.isDown){
             if(!this.flipflop){
                 this.currFrame++;
