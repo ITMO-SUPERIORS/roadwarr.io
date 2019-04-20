@@ -44,7 +44,7 @@ export interface Window{
     innerWidth: number;
 }
 
-export interface DomainSocket extends Socket {
+export interface DomainSocket extends SocketIOClient.Socket {
     civil: {
         id: string;
     };

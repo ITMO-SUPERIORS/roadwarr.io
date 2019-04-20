@@ -1,7 +1,10 @@
 #General
 #-------------------------------------------------------------------------------
-dist
 node_modules
 *.tsx
 yarn.lock
 package-lock.json
+/**/*.map
+/src/**/*.js
+/src/*.js
+bundle.js

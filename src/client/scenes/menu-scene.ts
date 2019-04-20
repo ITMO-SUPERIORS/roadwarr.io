@@ -4,7 +4,6 @@
  * @description roadwarr.io: Game Scene
  * @template Digitsensitive <digit.sensitivee@gmail.com>
 **/
-
 export class MenuScene extends Phaser.Scene{
     private startKey: Phaser.Input.Keyboard.Key;
     private title: Phaser.GameObjects.BitmapText[] = [];
