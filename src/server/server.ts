@@ -7,16 +7,16 @@ import path = require('path');
 
 const express = require("express");
 const app = express();
-const server = require("http").Server(app);
-const io = require("socket.io").listen(server);
+const server = require("http").createServer(app);
+const io = require("socket.io")(server);
 
 // let players = {};
 
-app.use(express.static(__dirname + '/public'));
+app.use(express.static(path.resolve(__dirname, '../..')));
 
-app.get('/', (req: Request, res: Response) => {
-    res.sendFile(path.join(__dirname, '../..', 'index.html'));
-})
+// app.get('/', (req: Request, res: Response) => {
+//     res.sendFile(path.resolve(__dirname, '../..', 'index.html'));
+// })
 
 class GameServer {
     constructor(){

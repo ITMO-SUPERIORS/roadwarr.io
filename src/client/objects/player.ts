@@ -10,7 +10,7 @@ export class Player extends Phaser.GameObjects.Image{
     private speed: number;
     private isDead: boolean;
     private scaleVal: number;
-    constructor(params){
+    constructor(params: any){ // завести интерфес!!!
         super(params.scene, params.x, params.y, params.key, params.frame);
 
         this.initVariables();

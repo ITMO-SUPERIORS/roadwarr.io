@@ -1,0 +1,29 @@
+const path = require('path');
+let phaser = path.join(__dirname, '../../node_modules/phaser/dist/phaser.js');
+
+module.exports = {
+  entry: './index.ts',
+  output: {
+    path: path.resolve(__dirname, '../../dist'),
+    filename: 'bundle.js',
+  },
+  module: {
+    rules: [
+      { test: /\.ts$/, loader: 'ts-loader', exclude: [path.resolve(__dirname, "/node_modules")] , options: {configFile: path.resolve(__dirname, "tsconfig.json")}},
+      { test: /phaser\.js$/, loader: 'expose-loader?Phaser' }
+    ]
+  },
+  devServer: {
+    contentBase: path.resolve(__dirname, './'),
+    publicPath: '../../dist/',
+    host: '127.0.0.1',
+    port: 8080,
+    open: true
+  },
+  resolve: {
+    extensions: ['.ts', '.js'],
+    alias: {
+      phaser: phaser
+    }
+  }
+};

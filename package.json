@@ -13,11 +13,12 @@
   ],
   "scripts": {
     "dev": "webpack --mode development && webpack-dev-server --mode development",
-    "w.build": "webpack --mode development",
+    "w.build": "cd ./src/client && webpack --mode development",
     "build": "tsc",
-    "watch-ts": "tsc -w",
+    "watch-client": "cd ./src/client && tsc -w",
+    "watch-server": "cd ./src/server && tsc -w",
     "watch-node": "nodemon ./src/server/server.js",
-    "watch": "concurrently -k -p \"[{name}]\" -n \"TypeScript, Node\" -c \"yello.bold, cyan.bold\" \"npm run watch-ts\" \"npm run watch-node\"",
+    "watch": "concurrently -k -p \"[{name}]\" -n \"TypeScript, Node\" -c \"yello.bold, cyan.bold\" \"npm run watch-client\" \"npm run watch-server\" \"npm run watch-node\"",
     "start": "npm run w.build && npm run watch"
   },
   "repository": {

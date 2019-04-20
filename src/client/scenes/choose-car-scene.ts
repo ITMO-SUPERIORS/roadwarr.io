@@ -5,8 +5,8 @@
  * @template Digitsensitive <digit.sensitivee@gmail.com>
 **/
 
-import { Window } from "../../shared/models"
-import { PlayerEvent } from "../../shared/events.model";
+// import { Window } from "../../shared/models"
+// import { PlayerEvent } from "../../shared/events.model";
 // declare const window: Window;
 
 export class ChooseCarScene extends Phaser.Scene{

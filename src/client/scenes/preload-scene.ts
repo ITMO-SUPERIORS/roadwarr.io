@@ -1,4 +1,4 @@
-import io = require('socket.io-client');
+import io from 'socket.io-client';
 export class PreloadScene extends Phaser.Scene{
     constructor() {
         super({ key: 'PreloadScene'})

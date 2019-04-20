@@ -11,7 +11,7 @@ import { Player } from "../objects/player";
 import { Coin } from "../objects/coin";
 import { Stone } from "../objects/stone";
 
-import { Window } from "../../shared/models"
+// import { Window } from "../../shared/models"
 
 // declare const window: Window;
 
@@ -20,29 +20,33 @@ export class GameScene extends Phaser.Scene {
   private coin: Coin;
   private stones: Phaser.GameObjects.Group;
   private player: Player;
-  private enemyPlayer: Player;
+  // private enemyPlayer: Player;
   private fcivil: CivilCar;
   private fstone: Stone;
   private scoreText: Phaser.GameObjects.BitmapText;
   private background: Phaser.GameObjects.TileSprite;
-  private roadside: number;  
+  private roadside: number = 0;  
   private road: Phaser.GameObjects.TileSprite;
-  private roadX: number;
+  private roadX: number = 0;
   private roadTex: Phaser.Textures.Texture;
-  private roadScale: number;
-  private roadWidth: number;
-  private carFrame: number;
-  private hasCoin: boolean;
-  private worldWidth: number;
-  private worldHeight: number;
+  private roadScale: number = 0;
+  private roadWidth: number = 0;
+  private carFrame: number = 0;
+  private hasCoin: boolean = false;
+  private worldWidth: number = 0;
+  private worldHeight: number = 0;
 
-  socket: SocketIOClient.Emitter;
+  socket: SocketIOClient.Emitter|undefined;
 
   constructor() {
     // window.socket = io.connect();
     super({
       key: "GameScene",
     });
+    this.road = this.add
+      .tileSprite(this.roadX, 0, this.roadWidth * this.roadScale, this.worldHeight, "roads")
+      .setOrigin(0, 0);
+    this.civilians = this.add.group({ classType: CivilCar });
   }
 
   init(data: any): void {
@@ -71,9 +75,7 @@ export class GameScene extends Phaser.Scene {
     this.roadTex = this.textures.get("roads");
     this.roadWidth = this.roadTex.getSourceImage().width;
     this.roadX = this.worldWidth / 2 - this.roadWidth*this.roadScale / 2;
-    this.road = this.add
-      .tileSprite(this.roadX, 0, this.roadWidth * this.roadScale, this.worldHeight, "roads")
-      .setOrigin(0, 0);
+    
     this.road.setTileScale(this.roadScale, this.roadScale);
     
     this.player = new Player({
@@ -84,16 +86,16 @@ export class GameScene extends Phaser.Scene {
       frame: this.carFrame
     });
 
-    this.enemyPlayer = new Player({
-      scene: this,
+    // this.enemyPlayer = new Player({
+    //   scene: this,
 
-    })
+    // })
     
     this.scoreText = this.add
       .bitmapText(30, 50, "font", this.registry.values.score)
       .setDepth(2);
 
-    this.civilians = this.add.group({ classType: CivilCar });
+    
 
     this.stones = this.add.group({ classType: Stone });
     
@@ -160,15 +162,15 @@ export class GameScene extends Phaser.Scene {
         this.coinDestroy();
 
       // Если игрок наехал на монетку
-      this.physics.overlap(this.player, this.coin, this.pickupCoin, null, this);
+      this.physics.overlap(this.player, this.coin, this.pickupCoin, undefined, this);
 
       // Если игрок столкнулся с другим автомобилем
-      this.physics.overlap(this.player, this.civilians, this.killPlayer, null, this);
+      this.physics.overlap(this.player, this.civilians, this.killPlayer, undefined, this);
 
       // Если игрок столкнулся с камнем
-      this.physics.overlap(this.player, this.stones, this.killPlayer, null, this);
+      this.physics.overlap(this.player, this.stones, this.killPlayer, undefined, this);
 
-      this.physics.overlap(this.coin, this.civilians, this.coinDestroy, null, this)
+      this.physics.overlap(this.coin, this.civilians, this.coinDestroy, undefined, this)
       // Если игрок выехал за пределы границ
       this.isOutOfScene();
     }

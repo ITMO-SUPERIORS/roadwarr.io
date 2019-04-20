@@ -5,7 +5,7 @@
  * @template Digitsensitive <digit.sensitivee@gmail.com>
 **/
 export class MenuScene extends Phaser.Scene{
-    private startKey: Phaser.Input.Keyboard.Key;
+    // private startKey: Phaser.Input.Keyboard.Key;
     private title: Phaser.GameObjects.BitmapText[] = [];
     private text: Phaser.GameObjects.BitmapText[] = [];
     private background: Phaser.GameObjects.TileSprite;
@@ -22,17 +22,31 @@ export class MenuScene extends Phaser.Scene{
         super({
             key: "MenuScene"
         });
+        console.log(this.input);
+        // this.startKey = this.input.keyboard.addKey(
+        //     Phaser.Input.Keyboard.KeyCodes.ENTER
+        // );
+        this.worldWidth = this.cameras.main.centerX * 2;
+        this.worldHeight = this.cameras.main.centerY * 2;
+        this.background = this.add
+            .tileSprite(0, 0, 0, this.worldHeight, "background")
+            .setOrigin(0, 0);
+        
+        this.roadScale = 2;
+        this.roadTex = this.textures.get("road");
+        this.roadWidth = this.roadTex.getSourceImage().width;
+        this.roadX = this.worldWidth / 2 - this.roadWidth;
+        this.road = this.add
+            .tileSprite(this.roadX, 0, this.roadWidth * this.roadScale, this.worldHeight, "road")
+            .setOrigin(0, 0);
     }
 
     init(): void {
-        this.startKey = this.input.keyboard.addKey(
-            Phaser.Input.Keyboard.KeyCodes.ENTER
-        );
-        this.startKey.isDown = false;
         
-        this.roadScale = 2;
-        this.worldWidth = this.sys.canvas.width;
-        this.worldHeight = this.sys.canvas.height;
+        // this.startKey.isDown = false;
+        
+        
+        
     }
 
     preload(): void {
@@ -44,17 +58,10 @@ export class MenuScene extends Phaser.Scene{
     }
 
     create(): void {
-        this.background = this.add
-            .tileSprite(0, 0, 0, this.worldHeight, "background")
-            .setOrigin(0, 0);
+        
         this.background.setScale(1.8, 1.8);
     
-        this.roadTex = this.textures.get("road");
-        this.roadWidth = this.roadTex.getSourceImage().width;
-        this.roadX = this.worldWidth / 2 - this.roadWidth;
-        this.road = this.add
-            .tileSprite(this.roadX, 0, this.roadWidth * this.roadScale, this.worldHeight, "road")
-            .setOrigin(0, 0);
+        
         this.road.setTileScale(this.roadScale, this.roadScale);
 
         this.title.push(
@@ -81,8 +88,8 @@ export class MenuScene extends Phaser.Scene{
     update(): void {
         this.road.tilePositionY -= 4;
         this.background.tilePositionY -= 4.5;
-        if (this.startKey.isDown){
-            this.scene.start("ChooseCarScene");
-        }
+        // if (this.startKey.isDown){
+        //     this.scene.start("ChooseCarScene");
+        // }
     }
 }
