@@ -34,9 +34,13 @@
         "url": "./src/assets/images/civil_car.png"
       },
       {
-        "type": "image",
-        "key": "stone",
-        "url": "./src/assets/images/stone.png"
+        "type":"spritesheet",
+        "key": "stones",
+        "url": "./src/assets/images/stones.png",
+        "frameConfig":{
+          "frameWidth": 179,
+          "frameHeight": 161
+        }
       },
       {
         "type": "image",
