@@ -4,6 +4,7 @@ import { ChooseCarScene } from "./scenes/choose-car-scene";
 import { GameScene } from "./scenes/game-scene";
 
 const config: GameConfig = {
+    type: Phaser.AUTO,
     width: 1000,
     height: 600,
     parent: "game",

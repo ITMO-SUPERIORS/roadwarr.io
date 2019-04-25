@@ -4,7 +4,7 @@ let phaser = path.join(__dirname, '../../node_modules/phaser/dist/phaser.js');
 module.exports = {
   entry: './index.ts',
   output: {
-    path: path.resolve(__dirname, '../../dist'),
+    path: path.resolve(__dirname, '../../public'),
     filename: 'bundle.js',
   },
   module: {
@@ -15,9 +15,9 @@ module.exports = {
   },
   devServer: {
     contentBase: path.resolve(__dirname, './'),
-    publicPath: '../../dist/',
+    publicPath: '../../',
     host: '127.0.0.1',
-    port: 8080,
+    port: 3000,
     open: true
   },
   resolve: {

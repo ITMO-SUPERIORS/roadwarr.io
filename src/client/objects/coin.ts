@@ -4,11 +4,12 @@
  * @description roadwarr.io: Object
  * @template Digitsensitive <digit.sensitivee@gmail.com>
 **/
+import { Object } from "../../shared/models"
 
 export class Coin extends Phaser.GameObjects.Image{
     scaleVal: number;
     coinFrame: number;
-    constructor(params: any){
+    constructor(params: Object){
         super(params.scene, params.x, params.y, params.key, params.frame);
         this.scaleVal = 0.4;
         this.setScale(this.scaleVal);

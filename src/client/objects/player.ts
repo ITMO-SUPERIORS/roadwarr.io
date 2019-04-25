@@ -4,21 +4,23 @@
  * @description roadwarr.io: Object
  * @template Digitsensitive <digit.sensitivee@gmail.com>
 **/
- 
+import { Object } from "../../shared/models"
 export class Player extends Phaser.GameObjects.Image{
     private cursors: Phaser.Input.Keyboard.CursorKeys;
     private speed: number;
     private isDead: boolean;
     private scaleVal: number;
-    constructor(params: any){ // завести интерфес!!!
+    constructor(params: Object){
         super(params.scene, params.x, params.y, params.key, params.frame);
 
-        this.initVariables();
+        this.speed = 4;
+        this.isDead = false;
+
         // sprite
-        this.initImage();
-        
+        this.setOrigin(0.5, 0.5);
+
         // input
-        this.initInput();
+        this.cursors = this.scene.input.keyboard.createCursorKeys();
 
         this.scaleVal = 0.8;
         this.setScale(this.scaleVal);
@@ -29,24 +31,6 @@ export class Player extends Phaser.GameObjects.Image{
 
         this.scene.add.existing(this);
     }
-
-    // инициализация переменных
-    private initVariables(): void {
-        this.speed = 4;
-        this.isDead = false;
-        // this.diagSpeed = this.speed / Math.sqrt(this.speed); // скорость по диагонали    
-    }
-    
-    private initImage(): void {
-        this.setOrigin(0.5, 0.5);
-    }
-    private initInput(): void {
-        this.cursors = this.scene.input.keyboard.createCursorKeys();
-    }
-
-    // public setVelocity(velocity: number): void{
-    //     this.body.setVelocityY(velocity);
-    // }
 
     // Смэрть
     public getDead(): boolean{
@@ -62,35 +46,28 @@ export class Player extends Phaser.GameObjects.Image{
 
     // управление автомобилем
     private handleImput(): void{
-        if(this.cursors.right.isDown && this.cursors.down.isDown){
-            // this.x += this.diagSpeed;
-            // this.y += this.diagSpeed;
-            this.x += this.speed;
-            this.y += this.speed;
-        } else if(this.cursors.right.isDown && this.cursors.up.isDown){
-            // this.x += this.diagSpeed;
-            // this.y -= this.diagSpeed;
-            this.x += this.speed;
-            this.y -= this.speed;
-        } else if(this.cursors.left.isDown && this.cursors.down.isDown){
-            // this.x -= this.diagSpeed;
-            // this.y += this.diagSpeed;
-            this.x -= this.speed;
-            this.y += this.speed;
-        } else if(this.cursors.left.isDown && this.cursors.up.isDown){
-            // this.x -= this.diagSpeed;
-            // this.y -= this.diagSpeed;
-            this.x -= this.speed;
-            this.y -= this.speed;
-        } else if (this.cursors.right.isDown){
-            this.x += this.speed;
-        } else if(this.cursors.left.isDown){
-            this.x -= this.speed;
-        } else if(this.cursors.up.isDown){
-            this.y -= this.speed;
-        } else if(this.cursors.down.isDown){
-            this.y += this.speed;
-        } 
+        if (this.cursors.right && this.cursors.left && this.cursors.up && this.cursors.down)
+            if(this.cursors.right.isDown && this.cursors.down.isDown){
+                this.x += this.speed;
+                this.y += this.speed;
+            } else if(this.cursors.right.isDown && this.cursors.up.isDown){
+                this.x += this.speed;
+                this.y -= this.speed;
+            } else if(this.cursors.left.isDown && this.cursors.down.isDown){
+                this.x -= this.speed;
+                this.y += this.speed;
+            } else if(this.cursors.left.isDown && this.cursors.up.isDown){
+                this.x -= this.speed;
+                this.y -= this.speed;
+            } else if (this.cursors.right.isDown){
+                this.x += this.speed;
+            } else if(this.cursors.left.isDown){
+                this.x -= this.speed;
+            } else if(this.cursors.up.isDown){
+                this.y -= this.speed;
+            } else if(this.cursors.down.isDown){
+                this.y += this.speed;
+            } 
     }
     
 }

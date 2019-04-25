@@ -26,8 +26,8 @@ export class MenuScene extends Phaser.Scene{
         // this.startKey = this.input.keyboard.addKey(
         //     Phaser.Input.Keyboard.KeyCodes.ENTER
         // );
-        this.worldWidth = this.cameras.main.centerX * 2;
-        this.worldHeight = this.cameras.main.centerY * 2;
+        this.worldWidth = this.game.config.width as number;
+        this.worldHeight = this.game.config.height as number;
         this.background = this.add
             .tileSprite(0, 0, 0, this.worldHeight, "background")
             .setOrigin(0, 0);

@@ -27,10 +27,6 @@ export class ChooseCarScene extends Phaser.Scene{
         super({
             key: "ChooseCarScene"
         });
-        // window.socket = io.connect(); 
-    }
-
-    init(){
         this.worldWidth = this.sys.canvas.width;
         this.worldHeight = this.sys.canvas.height;
         this.flipflop = false;
@@ -38,8 +34,20 @@ export class ChooseCarScene extends Phaser.Scene{
         this.startKey = this.input.keyboard.addKey(
             Phaser.Input.Keyboard.KeyCodes.ENTER
         );
-        this.startKey.isDown = false;
         this.cursors = this.input.keyboard.createCursorKeys();
+        // window.socket = io.connect(); 
+
+        this.background = this.add
+            .tileSprite(0, 0, 0, this.worldHeight, "background")
+            .setOrigin(0, 0);
+        this.carsTex = this.textures.get("player_cars");
+        this.maxFrame = this.carsTex.frameTotal - 2;
+        this.carSprite = this.add.sprite(this.worldWidth / 2, this.worldHeight / 2, "player_cars", this.currFrame);
+    }
+
+    init(){
+        
+        this.startKey.isDown = false;
     }
 
     preload(): void{
@@ -51,16 +59,8 @@ export class ChooseCarScene extends Phaser.Scene{
     }
 
     create(): void{
-        this.background = this.add
-            .tileSprite(0, 0, 0, this.worldHeight, "background")
-            .setOrigin(0, 0);
         this.background.setScale(1.8, 1.8);
-
-        this.carsTex = this.textures.get("player_cars");
-        this.maxFrame = this.carsTex.frameTotal - 2;
-        this.carSprite = this.add.sprite(this.worldWidth / 2, this.worldHeight / 2, "player_cars", this.currFrame);
         this.carSprite.setScale(1.5);
-
         this.title.push(
             this.add.bitmapText(
                 this.worldWidth / 2 - 300, 
@@ -95,7 +95,7 @@ export class ChooseCarScene extends Phaser.Scene{
 
     private changeCar(): void{
         this.background.tilePositionY -= 4;
-        if (this.cursors.right.isDown){
+        if (this.cursors.right && this.cursors.right.isDown){
             if(!this.flipflop){
                 this.currFrame++;
                 if (this.currFrame > this.maxFrame)
@@ -105,7 +105,7 @@ export class ChooseCarScene extends Phaser.Scene{
             }
         } 
         
-        if (this.cursors.left.isDown){
+        if (this.cursors.left && this.cursors.left.isDown){
             if(!this.flipflop){
                 this.currFrame--;
                 if (this.currFrame < 0)
@@ -115,7 +115,7 @@ export class ChooseCarScene extends Phaser.Scene{
             }
         }
 
-        if (this.cursors.left.isUp && this.cursors.right.isUp)
+        if (this.cursors.left && this.cursors.right && this.cursors.left.isUp && this.cursors.right.isUp)
             this.flipflop = false;
     }
 

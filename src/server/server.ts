@@ -4,8 +4,8 @@ import { DomainSocket } from "../shared/models";
 // import { PlayerEvent, GameEvent } from "../shared/events.model";
 // import { Player } from "../client/objects/player";
 import path = require('path');
+import express from "express";
 
-const express = require("express");
 const app = express();
 const server = require("http").createServer(app);
 const io = require("socket.io")(server);
