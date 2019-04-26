@@ -2,7 +2,7 @@ const path = require('path');
 let phaser = path.join(__dirname, '../../node_modules/phaser/dist/phaser.js');
 
 module.exports = {
-  entry: './index.ts',
+  entry: '../../public/scripts/client/index.js',
   output: {
     path: path.resolve(__dirname, '../../public'),
     filename: 'bundle.js',

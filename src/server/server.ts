@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+// import { Request, Response } from "express";
 // import { Socket } from "socket.io";
 import { DomainSocket } from "../shared/models";
 // import { PlayerEvent, GameEvent } from "../shared/events.model";
@@ -12,7 +12,7 @@ const io = require("socket.io")(server);
 
 // let players = {};
 
-app.use(express.static(path.resolve(__dirname, '../..')));
+app.use(express.static(path.resolve(__dirname, '../../public')));
 
 // app.get('/', (req: Request, res: Response) => {
 //     res.sendFile(path.resolve(__dirname, '../..', 'index.html'));
