@@ -16,19 +16,19 @@ import { Stone } from "../objects/stone";
 // declare const window: Window;
 
 export class GameScene extends Phaser.Scene {
-  private civilians : Phaser.GameObjects.Group;
+  private civilians : Phaser.GameObjects.Group | undefined;
   private coin: Coin | undefined;
-  private stones: Phaser.GameObjects.Group;
+  private stones: Phaser.GameObjects.Group | undefined;
   private player: Player | undefined;
   // private enemyPlayer: Player;
   private fcivil: CivilCar | undefined;
   private fstone: Stone | undefined;
-  private scoreText: Phaser.GameObjects.BitmapText;
-  private background: Phaser.GameObjects.TileSprite;
+  private scoreText: Phaser.GameObjects.BitmapText | undefined;
+  private background: Phaser.GameObjects.TileSprite | undefined;
   private roadside: number = 0;  
-  private road: Phaser.GameObjects.TileSprite;
+  private road: Phaser.GameObjects.TileSprite | undefined;
   private roadX: number = 0;
-  private roadTex: Phaser.Textures.Texture;
+  private roadTex: Phaser.Textures.Texture | undefined;
   private roadScale: number = 0;
   private roadWidth: number = 0;
   private carFrame: number = 0;
@@ -41,46 +41,47 @@ export class GameScene extends Phaser.Scene {
     super({
       key: "GameScene",
     });
+    
+  }
+
+  init(data: any): void {
+    this.background = this.add
+      .tileSprite(0, 0, 0, this.worldHeight, "background")
+      .setOrigin(0, 0);
     this.road = this.add
       .tileSprite(this.roadX, 0, this.roadWidth * this.roadScale, this.worldHeight, "roads")
       .setOrigin(0, 0);
     this.civilians = this.add.group({ classType: CivilCar });
     this.stones = this.add.group({ classType: Stone });
-    this.background = this.add
-      .tileSprite(0, 0, 0, this.worldHeight, "background")
-      .setOrigin(0, 0);
+    
     this.scoreText = this.add
       .bitmapText(30, 50, "font", this.registry.values.score)
       .setDepth(2);
-    this.roadTex = this.textures.get("roads");
-  }
-
-  init(data: any): void {
+    
     this.roadScale = 1.2;
     this.worldWidth = this.game.canvas.width;
     this.worldHeight = this.game.canvas.height;
     this.registry.set("score", 0);
     this.roadside = 40;
     this.carFrame = data.frame;
+    
+    this.background.setScale(1.8, 1.8);
+    this.road.setTileScale(this.roadScale, this.roadScale);
   }
 
   preload(): void {
     // ассеты
     this.load.pack(
       "roadwarrioPack",
-      "./src/assets/pack.json",
+      "/assets/pack.json",
       "roadwarrioPack"
     )
   }
 
   create(): void {
-    
-    this.background.setScale(1.8, 1.8);
+    this.roadTex = this.textures.get("roads");
     this.roadWidth = this.roadTex.getSourceImage().width;
     this.roadX = this.worldWidth / 2 - this.roadWidth*this.roadScale / 2;
-    
-    this.road.setTileScale(this.roadScale, this.roadScale);
-    
     this.player = new Player({
       scene: this,
       x: this.worldWidth / 2,
@@ -91,15 +92,8 @@ export class GameScene extends Phaser.Scene {
 
     // this.enemyPlayer = new Player({
     //   scene: this,
-
     // })
-    
-    
-
-    
-
-    
-    
+  
     // Добавление таймера на появление мирных автомобилей
     this.addNewCivilCar();
     this.time.addEvent({ 
@@ -140,7 +134,7 @@ export class GameScene extends Phaser.Scene {
 
   update(): void {
     // если игрок жив
-    if (this.player)
+    if (this.player && this.road && this.background && this.civilians && this.stones)
       if (!this.player.getDead()){
         this.road.tilePositionY -= 7;
         this.background.tilePositionY -= 5;
@@ -215,27 +209,29 @@ export class GameScene extends Phaser.Scene {
   }
 
   private addCivilCar(x: number, y: number, frame: number): void {
-    this.civilians.add(
-      new CivilCar({
-        scene: this,
-        x: x,
-        y: y,
-        frame: frame,
-        key: "civilians_cars"
-      })
-    );
+    if (this.civilians)
+      this.civilians.add(
+        new CivilCar({
+          scene: this,
+          x: x,
+          y: y,
+          frame: frame,
+          key: "civilians_cars"
+        })
+      );
   }
 
   private addStone(x: number, y: number, frame: number): void {
-    this.stones.add(
-      new Stone({
-        scene: this,
-        x: x,
-        y: y,
-        frame: frame,
-        key: "stones"
-     })
-    );
+    if (this.stones)
+      this.stones.add(
+        new Stone({
+          scene: this,
+          x: x,
+          y: y,
+          frame: frame,
+          key: "stones"
+      })
+      );
   }
 
   // добавление монетки в сцену
@@ -263,13 +259,16 @@ export class GameScene extends Phaser.Scene {
   }
 
   private coinDestroy(): void{
-    if (this.coin)
+    if (this.coin){
       this.coin.destroy();
+      this.coin = undefined;
+    }
+      
   }
 
   // когда игрок подобрал монетку
   private pickupCoin(): void{
-    if (this.coin){
+    if (this.coin && this.scoreText){
       if (this.coin.getFrame())
         this.registry.values.score += 1;
       else
@@ -308,25 +307,27 @@ export class GameScene extends Phaser.Scene {
   }
   
   private game_over(): void{
-    this.road.tilePositionY = this.road.tilePositionY;
+    if (this.road)
+      this.road.tilePositionY = this.road.tilePositionY;
     if (this.coin){
       this.coin.body.setVelocityY(0);
     }
-    
-    Phaser.Actions.Call(
-      this.stones.getChildren(),
-      function(stone){
-        stone.body.setVelocityY(0);
-     },
-     this
-    );
-    Phaser.Actions.Call(
-      this.civilians.getChildren(),
-      function(civilCar){
-        civilCar.body.setVelocityY(0);
+    if (this.stones)
+      Phaser.Actions.Call(
+        this.stones.getChildren(),
+        function(stone){
+          stone.body.setVelocityY(0);
       },
       this
-    );
+      );
+    if (this.civilians)
+      Phaser.Actions.Call(
+        this.civilians.getChildren(),
+        function(civilCar){
+          civilCar.body.setVelocityY(0);
+        },
+        this
+      );
     
     
     this.time.addEvent({ 

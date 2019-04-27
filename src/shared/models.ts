@@ -4,13 +4,7 @@ export interface Civil {
     id: string;
 }
 
-export interface Object{
-    scene: Phaser.Scene;
-    x: number;
-    y: number;
-    key: string;
-    frame: number;
-}
+
 export interface PlayerCar {
     name: string;
     id: string;
@@ -40,15 +34,6 @@ export interface Player{
     y: number;
     player?: Player;
     coors?: Coordinates & playerActions;
-}
-
-export interface Window{
-    socket: SocketIOClient.Emitter;
-    location: {
-        reload(forceReload: boolean): void;
-    };
-    innerHeight: number;
-    innerWidth: number;
 }
 
 export interface DomainSocket extends Socket {

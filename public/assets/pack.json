@@ -1,0 +1,74 @@
+{
+  "roadwarrioPack": {
+    "files": [
+      {
+        "type": "bitmapFont",
+        "key": "font",
+        "textureURL": "/assets/font/font.png",
+        "fontDataURL": "/assets/font/font.fnt"
+      },
+      {
+        "type": "bitmapFont",
+        "key": "game-font",
+        "textureURL": "/assets/font/game_font/font.png",
+        "fontDataURL": "/assets/font/game_font/font.fnt"
+      },
+      {
+        "type": "image",
+        "key": "roads",
+        "url": "/assets/images/roads.png"
+      },
+      {
+        "type": "image",
+        "key": "player",
+        "url": "/assets/images/car_2.png"
+      },
+      {
+        "type": "image",
+        "key": "civilian",
+        "url": "/assets/images/civil_car.png"
+      },
+      {
+        "type":"spritesheet",
+        "key": "stones",
+        "url": "/assets/images/stones.png",
+        "frameConfig":{
+          "frameWidth": 179,
+          "frameHeight": 161
+        }
+      },
+      {
+        "type": "image",
+        "key": "background",
+        "url": "/assets/images/grass_ground.png"
+      },
+      {
+        "type":"spritesheet",
+        "key": "player_cars",
+        "url": "/assets/images/cars.png",
+        "frameConfig":{
+          "frameWidth": 67,
+          "frameHeight": 126
+        }
+      },
+      {
+        "type":"spritesheet",
+        "key": "civilians_cars",
+        "url": "/assets/images/civil_cars.png",
+        "frameConfig":{
+          "frameWidth": 67,
+          "frameHeight": 125
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "coins",
+        "url": "/assets/images/coins.png",
+        "frameConfig": {
+          "frameWidth": 130,
+          "frameHeight": 130
+        }
+      }
+    ]
+  }
+}

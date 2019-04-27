@@ -4,13 +4,13 @@
  * @description roadwarr.io: Object
  * @template Digitsensitive <digit.sensitivee@gmail.com>
 **/
-import { Object } from "../../shared/models"
+import { GMObject } from "../models"
 export class Player extends Phaser.GameObjects.Image{
     private cursors: Phaser.Input.Keyboard.CursorKeys;
     private speed: number;
     private isDead: boolean;
     private scaleVal: number;
-    constructor(params: Object){
+    constructor(params: GMObject){
         super(params.scene, params.x, params.y, params.key, params.frame);
 
         this.speed = 4;
