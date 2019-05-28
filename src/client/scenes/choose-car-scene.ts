@@ -19,18 +19,19 @@ export class ChooseCarScene extends Phaser.Scene{
     private carsTex: Phaser.Textures.Texture | undefined;
     private cursors: Phaser.Input.Keyboard.CursorKeys | undefined;
     private startKey: Phaser.Input.Keyboard.Key | undefined;
-    private currFrame: number = 0;
+    private currFrame: number = 1;
     private maxFrame: number = 0;
     private flipflop: boolean = false;
-
+    // private flipflopEnter: boolean = false;
+    socket: SocketIOClient.Socket | undefined;
     constructor(){
         super({
             key: "ChooseCarScene"
         });
-        
     }
 
-    init(){
+    init(data: any): void{
+        this.socket = data.socket;
         this.worldWidth = this.sys.canvas.width;
         this.worldHeight = this.sys.canvas.height;
         this.startKey = this.input.keyboard.addKey(
@@ -46,14 +47,6 @@ export class ChooseCarScene extends Phaser.Scene{
         this.maxFrame = this.carsTex.frameTotal - 2;
         this.carSprite = this.add.sprite(this.worldWidth / 2, this.worldHeight / 2, "player_cars", this.currFrame);
         this.startKey.isDown = false;
-    }
-
-    preload(): void{
-        this.load.pack(
-            "roadwarrioPack",
-            "/assets/pack.json",
-            "roadwarrioPack"
-        );
     }
 
     create(): void{
@@ -80,29 +73,27 @@ export class ChooseCarScene extends Phaser.Scene{
                 20
             )
         );
-        
-
     }
 
     update(): void{
+        if (this.background)
+            this.background.tilePositionY -= 4;
         if (this.carSprite)
             this.carSprite.angle -= 1;
         this.changeCar();
-        if (this.startKey && this.startKey.isDown){
-            this.scene.start("GameScene", {frame: this.currFrame});
-            // this.waitingForPlayer();
+        if (this.socket && this.startKey && this.startKey.isDown){
+            this.scene.start("GameScene", {frame: this.currFrame, socket: this.socket})
         }
+        
     }
 
     private changeCar(): void{
-        if (this.background)
-            this.background.tilePositionY -= 4;
         if (this.carSprite && this.cursors){
             if (this.cursors.right && this.cursors.right.isDown){
                 if(!this.flipflop){
                     this.currFrame++;
                     if (this.currFrame > this.maxFrame)
-                        this.currFrame = 0;
+                        this.currFrame = 1;
                         this.carSprite.setFrame(this.currFrame);
                     this.flipflop = true;
                 }
@@ -111,7 +102,7 @@ export class ChooseCarScene extends Phaser.Scene{
             if (this.cursors.left && this.cursors.left.isDown){
                 if(!this.flipflop){
                     this.currFrame--;
-                    if (this.currFrame < 0)
+                    if (this.currFrame < 1)
                         this.currFrame = this.maxFrame;
                     this.carSprite.setFrame(this.currFrame);
                     this.flipflop = true;

@@ -17,10 +17,11 @@ export class Coin extends Phaser.GameObjects.Image{
         this.coinFrame = params.frame;
         // physics
         this.scene.physics.world.enable(this);
+        this.body.setSize(this.width, this.height);
         this.body.allowGravity = false;
         this.body.setVelocityY(200);
-        this.body.setSize(this.width, this.height);
         this.scene.add.existing(this);
+        
     }
 
     public getFrame(): number{

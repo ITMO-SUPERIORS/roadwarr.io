@@ -10,17 +10,14 @@ import { CivilCar } from "../objects/civil-car";
 import { Player } from "../objects/player";
 import { Coin } from "../objects/coin";
 import { Stone } from "../objects/stone";
-
-// import { Window } from "../../shared/models"
-
-// declare const window: Window;
+import { PlayerEvent, GameEvent, CoinEvent, RockEvent, CivilEvent } from "../../shared/events.model";
+import { Player as PlayerData, Coordinates, Object as ObjectData } from "../../shared/models";
 
 export class GameScene extends Phaser.Scene {
   private civilians : Phaser.GameObjects.Group | undefined;
-  private coin: Coin | undefined;
+  private coin: Coin | undefined = undefined;
   private stones: Phaser.GameObjects.Group | undefined;
   private player: Player | undefined;
-  // private enemyPlayer: Player;
   private fcivil: CivilCar | undefined;
   private fstone: Stone | undefined;
   private scoreText: Phaser.GameObjects.BitmapText | undefined;
@@ -29,35 +26,27 @@ export class GameScene extends Phaser.Scene {
   private road: Phaser.GameObjects.TileSprite | undefined;
   private roadX: number = 0;
   private roadTex: Phaser.Textures.Texture | undefined;
-  private roadScale: number = 0;
+  private roadScale: number = 1;
   private roadWidth: number = 0;
   private carFrame: number = 0;
   private worldWidth: number = 0;
   private worldHeight: number = 0;
-  socket: SocketIOClient.Emitter|undefined;
-
+  private opponent: Player | undefined;
+  private oldPosition: Coordinates | undefined;
+  socket: SocketIOClient.Socket | undefined;
   constructor() {
-    // window.socket = io.connect();
     super({
       key: "GameScene",
     });
-    
   }
 
   init(data: any): void {
-    this.background = this.add
-      .tileSprite(0, 0, 0, this.worldHeight, "background")
-      .setOrigin(0, 0);
-    this.road = this.add
-      .tileSprite(this.roadX, 0, this.roadWidth * this.roadScale, this.worldHeight, "roads")
-      .setOrigin(0, 0);
+    this.socket = data.socket;
     this.civilians = this.add.group({ classType: CivilCar });
     this.stones = this.add.group({ classType: Stone });
-    
     this.scoreText = this.add
       .bitmapText(30, 50, "font", this.registry.values.score)
-      .setDepth(2);
-    
+      .setDepth(2);   
     this.roadScale = 1.2;
     this.worldWidth = this.game.canvas.width;
     this.worldHeight = this.game.canvas.height;
@@ -65,112 +54,121 @@ export class GameScene extends Phaser.Scene {
     this.roadside = 40;
     this.carFrame = data.frame;
     
-    this.background.setScale(1.8, 1.8);
-    this.road.setTileScale(this.roadScale, this.roadScale);
-  }
-
-  preload(): void {
-    // ассеты
-    this.load.pack(
-      "roadwarrioPack",
-      "/assets/pack.json",
-      "roadwarrioPack"
-    )
   }
 
   create(): void {
+    this.background = this.add
+      .tileSprite(0, 0, 0, this.worldHeight, "background")
+      .setOrigin(0, 0);
+    this.background.setScale(1.8, 1.8);
+
     this.roadTex = this.textures.get("roads");
     this.roadWidth = this.roadTex.getSourceImage().width;
-    this.roadX = this.worldWidth / 2 - this.roadWidth*this.roadScale / 2;
-    this.player = new Player({
-      scene: this,
-      x: this.worldWidth / 2,
-      y: this.worldHeight / 2,
-      key: "player_cars",
-      frame: this.carFrame
-    });
+    this.roadX = this.worldWidth / 2 - this.roadWidth * this.roadScale / 2;
+    this.road = this.add
+      .tileSprite(this.roadX, 0, this.roadWidth * this.roadScale, this.worldHeight, "roads")
+      .setOrigin(0, 0);
 
-    // this.enemyPlayer = new Player({
-    //   scene: this,
-    // })
-  
-    // Добавление таймера на появление мирных автомобилей
-    this.addNewCivilCar();
-    this.time.addEvent({ 
-      delay: 2200, //ms
-      callback: this.addNewCivilCar,
-      callbackScope: this,
-      loop: true
-    });
-    
-    // Добавление таймера на появление камней на обочине
-    this.addNewStoneLeft();
-    this.time.addEvent({ 
-      delay: 1000, //ms
-      callback: this.addNewStoneLeft,
-      callbackScope: this,
-      loop: true
-    });
-    
-    // Добавление таймера на появление камней на обочине
-    this.addNewStoneRight();
-    this.time.addEvent({ 
-      delay: 1500, //ms
-      callback: this.addNewStoneRight,
-      callbackScope: this,
-      loop: true
-    });
+    this.road.setTileScale(this.roadScale, this.roadScale);
+    if (this.socket){
+      // Передача сообщения, что игра началась
+      this.socket.emit(GameEvent.gameStarted, {
+        width: this.worldWidth, 
+        height: this.worldHeight,
+        roadWidth: this.roadWidth,
+        roadScale: this.roadScale,
+        roadSide: this.roadside });
+        
+      // Создание игрока
+      this.socket.on(PlayerEvent.protagonist, (player: PlayerData) => {
+        this.createPlayer(player);
+      })
+      // Создание оппонента
+      this.socket.on(PlayerEvent.opponent, (opponent: PlayerData) =>{
+        this.createEnemyPlayer(opponent);
+      })
+      
+      // Создание монетки
+      this.socket.on(CoinEvent.create, (coin: ObjectData) => {
+        this.addCoin(coin);
+      })
 
-    // добавление таймера на появление монеток
-    this.addNewCoin();
-    this.time.addEvent({ 
-      delay: 5000, //ms
-      callback: this.addNewCoin,
-      callbackScope: this,
-      loop: true
-    });
+      // Создание камня
+      this.socket.on(RockEvent.create, (rock: ObjectData) => {
+        this.addStone(rock);
+      })
 
+      // Создание мирного автомобиля
+      this.socket.on(CivilEvent.create, (civil: ObjectData) => {
+        this.addCivilCar(civil);
+      })
+    }  
   }
 
   update(): void {
-    // если игрок жив
-    if (this.player && this.road && this.background && this.civilians && this.stones)
+    if (this.player && this.road && this.background && this.stones && this.civilians)
+      // если игрок жив
       if (!this.player.getDead()){
         this.road.tilePositionY -= 7;
-        this.background.tilePositionY -= 5;
+        this.background.tilePositionY -= 4.6;
+
         this.player.update();
 
+        if (this.socket){            
+          // обновление позиции оппонента 
+          this.socket.on(PlayerEvent.move, (opponent: PlayerData) => {
+            if (this.opponent){
+                this.opponent.x = opponent.x;
+                this.opponent.y = opponent.y;
+            }
+          })
+        }
+
+        // проверка, на обновление позиции игрока
+        let x = this.player.x;
+        let y = this.player.y;
+        if (this.oldPosition && this.socket && (x != this.oldPosition.x || y != this.oldPosition.y) ){
+          // Передача новой позиции игрока на сервер
+          this.socket.emit(PlayerEvent.move, {
+            x: this.player.x, 
+            y: this.player.y, 
+            id: this.player.id});
+        }
+        // сохранение текущей позиции
+        this.oldPosition = {
+          x: this.player.x,
+          y: this.player.y
+        }
+        
         this.checkPlayerPos();
 
-        // Удаление машин, которые выехали за пределы сцены
+        // Удаление машин, за пределами экрана
         this.fcivil = this.civilians.getFirstAlive();
-        if (this.fcivil)
-          if (this.fcivil.y > this.worldHeight)
-            this.fcivil.destroy();
+        if (this.fcivil && this.fcivil.y > this.worldHeight)
+          this.fcivil.destroy();
 
-        // Удаление камней за пределами сцены
-        // this.firstStone = this.stones.getFirstAlive();
-        
+        // Удаление камней за пределами экрана        
         this.fstone = this.stones.getFirstAlive();
         if (this.fstone && this.fstone.y > this.worldHeight)
           this.fstone.destroy();
         
-        // удаление монетки за пределами поля
-        if (this.coin)
+        
+        if (this.coin){
+          // удаление монетки за пределами поля
           if (this.coin.y > this.worldHeight)
             this.coinDestroy();
-        
-        // Если игрок наехал на монетку
-        
-        this.physics.overlap(this.player, this.coin, this.pickupCoin, undefined, this);
 
-        // Если игрок столкнулся с другим автомобилем
+          // Если игрок наехал на монетку
+          this.physics.overlap(this.player, this.coin, this.pickupCoin, undefined, this);
+          // Если монетка появилась в том же месте, где и мирный, удаляем монетку
+          this.physics.overlap(this.coin, this.civilians, this.coinDestroy, undefined, this)    
+        }
+
+        // Если игрок столкнулся с мирным автомобилем
         this.physics.overlap(this.player, this.civilians, this.killPlayer, undefined, this);
 
         // Если игрок столкнулся с камнем
         this.physics.overlap(this.player, this.stones, this.killPlayer, undefined, this);
-        if (this.coin)
-          this.physics.overlap(this.coin, this.civilians, this.coinDestroy, undefined, this)
         // Если игрок выехал за пределы границ
         this.isOutOfScene();
       }
@@ -188,82 +186,57 @@ export class GameScene extends Phaser.Scene {
   }
 
   // Добавление мирного автомобиля
-  private addNewCivilCar(): void {
-    let x = Phaser.Math.Between(this.roadX + this.roadside, this.worldWidth - this.roadX - 80 - this.roadside);
-    let carType = Phaser.Math.Between(0, 4);
-    this.addCivilCar(x, -150, carType);
-  }
-
-  // Добавление левого камня
-  private addNewStoneLeft(): void {
-    let x = Phaser.Math.Between(0, this.roadX - 100);
-    let stoneType = Phaser.Math.Between(0, 3);
-    this.addStone(x, -80, stoneType);
-  }
-
-  // Добавление правого камня
-  private addNewStoneRight(): void {
-    let x = Phaser.Math.Between(this.worldWidth - this.roadX, this.worldWidth);
-    let stoneType = Phaser.Math.Between(0, 3);
-    this.addStone(x, -80, stoneType);
-  }
-
-  private addCivilCar(x: number, y: number, frame: number): void {
+  private addCivilCar(civil: ObjectData): void {
     if (this.civilians)
       this.civilians.add(
         new CivilCar({
           scene: this,
-          x: x,
-          y: y,
-          frame: frame,
+          x: civil.x,
+          y: civil.y,
+          frame: civil.frame,
           key: "civilians_cars"
         })
       );
   }
 
-  private addStone(x: number, y: number, frame: number): void {
+  // Добавление камня
+  private addStone(stone: ObjectData): void {
     if (this.stones)
       this.stones.add(
         new Stone({
           scene: this,
-          x: x,
-          y: y,
-          frame: frame,
+          x: stone.x,
+          y: stone.y,
+          frame: stone.frame,
           key: "stones"
       })
-      );
+    );
   }
 
-  // добавление монетки в сцену
-  private addNewCoin(): void{
-    let x = Phaser.Math.Between(this.roadX + this.roadside, this.worldWidth - this.roadX - 80 - this.roadside);
-    let range = Phaser.Math.Between(0, 9);
-    if (range < 8){
-      this.addCoin(x, -80, 1);
-    }
-    else{
-      this.addCoin(x, -80, 0);
-    }
-  }
-
-  private addCoin(x: number, y: number, frame: number): void{
+  // Создание монетки в сцене
+  private addCoin(coin: ObjectData): void{
     if (this.coin == undefined){
       this.coin = new Coin({
         scene: this,
-        x: x,
-        y: y,
-        frame: frame,
+        x: coin.x,
+        y: coin.y,
+        frame: coin.frame,
         key: "coins"
       })
     }
   }
 
-  private coinDestroy(): void{
-    if (this.coin){
-      this.coin.destroy();
-      this.coin = undefined;
+  // Уничтожение монетки с поля
+  private coinDestroy(): void{      
+    if (this.socket){
+      this.socket.emit(CoinEvent.destroy);
+      this.socket.on(CoinEvent.destroy, () => {
+        if (this.coin){
+          this.coin.destroy();
+          this.coin = undefined;
+        }
+      })
     }
-      
   }
 
   // когда игрок подобрал монетку
@@ -306,12 +279,35 @@ export class GameScene extends Phaser.Scene {
     }
   }
   
+  // Создание игрока
+  private createPlayer(data: PlayerData): void{
+    this.player = new Player({
+      scene: this,
+      x: data.x,
+      y: data.y,
+      key: "player_cars",
+      frame: this.carFrame
+    },
+    data.id);
+  }
+
+  // Создание вражеского игрока
+  private createEnemyPlayer(data: PlayerData): void{
+    this.opponent = new Player({
+      scene: this,
+      x: data.x,
+      y: data.y,
+      key: "player_cars",
+      frame: 0
+    }, data.id)
+  }
+
+  // Конец игры
   private game_over(): void{
     if (this.road)
       this.road.tilePositionY = this.road.tilePositionY;
-    if (this.coin){
+    if (this.coin)
       this.coin.body.setVelocityY(0);
-    }
     if (this.stones)
       Phaser.Actions.Call(
         this.stones.getChildren(),
@@ -342,4 +338,6 @@ export class GameScene extends Phaser.Scene {
   private backToMenu(): void{
     this.scene.start("MenuScene");
   }
+
+  
 }

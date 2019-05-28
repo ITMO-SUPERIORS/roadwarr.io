@@ -14,3 +14,9 @@ export interface GMObject{
     key: string;
     frame: number;
 }
+
+export interface Car{
+    x: number;
+    y: number;
+    id: string;
+}

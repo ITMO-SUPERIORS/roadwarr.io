@@ -10,9 +10,10 @@ export class Player extends Phaser.GameObjects.Image{
     private speed: number;
     private isDead: boolean;
     private scaleVal: number;
-    constructor(params: GMObject){
+    public id: string;
+    constructor(params: GMObject, id: string){
         super(params.scene, params.x, params.y, params.key, params.frame);
-
+        this.id = id;
         this.speed = 4;
         this.isDead = false;
 
